@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="3">
+    <title>AI Load Balancer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1>⚡ Predictive Load Balancer (Live System)</h1>
+
+    <!-- 🔥 LIVE SYSTEM DASHBOARD -->
+    {% if result %}
+
+    <!-- 🖥️ SYSTEM METRICS -->
+    <div class="glass-card">
+        <h3>🖥️ Live System Metrics (Your Laptop)</h3>
+
+        <p>🔥 CPU Usage: {{ result.cpu }}%</p>
+        <p>💤 CPU Idle: {{ result.idle }}%</p>
+        <p>⚙️ Load (1 min): {{ result.load }}</p>
+        <p>🧠 Memory Usage: {{ result.mem }}%</p>
+    </div>
+
+    <!-- 🔮 PREDICTION -->
+    <div class="glass-card">
+        <h2 class="prediction {{ result.prediction }}">
+            {{ result.prediction }}
+        </h2>
+
+        <div class="decision-badge {{ result.decision.replace(' ', '_') }}">
+            {{ result.decision }}
+        </div>
+    </div>
+
+    <!-- 🔵 CONFIDENCE CIRCLE -->
+    <div class="circle"
+        data-value="{% if result.prediction=='HIGH' %}{{ result.prob_high }}
+                    {% elif result.prediction=='MEDIUM' %}{{ result.prob_med }}
+                    {% else %}{{ result.prob_low }}
+                    {% endif %}">
+
+        <svg>
+            <circle cx="70" cy="70" r="60"></circle>
+            <circle cx="70" cy="70" r="60" class="progress-circle"></circle>
+        </svg>
+
+        <div class="number">
+            {% if result.prediction=='HIGH' %}
+                {{ result.prob_high }}%
+            {% elif result.prediction=='MEDIUM' %}
+                {{ result.prob_med }}%
+            {% else %}
+                {{ result.prob_low }}%
+            {% endif %}
+        </div>
+
+        <p>Low: {{ result.prob_low }}</p>
+        <p>Med: {{ result.prob_med }}</p>
+        <p>High: {{ result.prob_high }}</p>
+    </div>
+
+    <!-- 📊 CHARTS -->
+    <div class="charts-container">
+        <div class="glass-card">
+            <h3>📊 Prediction Confidence</h3>
+            <canvas id="probChart"></canvas>
+        </div>
+
+        <div class="glass-card">
+            <h3>📈 CPU Trend (Live Simulation)</h3>
+            <canvas id="cpuChart"></canvas>
+        </div>
+    </div>
+
+    <div id="chartData"
+        data-low="{{ result.prob_low }}"
+        data-med="{{ result.prob_med }}"
+        data-high="{{ result.prob_high }}">
+    </div>
+
+    <!-- 🧾 HISTORY -->
+    <div class="glass-card">
+        <h3>🧾 Recent Predictions</h3>
+        <table id="historyTable">
+            <thead>
+                <tr>
+                    <th>CPU</th>
+                    <th>Load</th>
+                    <th>Prediction</th>
+                    <th>Decision</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- 🧠 INSIGHT -->
+    <div class="glass-card" id="insightBox"></div>
+
+    {% else %}
+    <div class="glass-card">
+        <h3>⚠ No data available</h3>
+        <p>Start Flask app and system will auto-generate live metrics.</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
